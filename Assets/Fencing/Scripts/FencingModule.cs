@@ -56,8 +56,7 @@ public class FencingModule : MonoBehaviour
         InitialiseBombModule();
         InitialiseInteractionHandlers();
         currentScenario = scenarioGenerator.GetScenario();
-        currentScenario.Log(BombModule);
-        ApplyScenario(currentScenario);
+        SetUpForScenario(currentScenario);
     }
 
     private void InitialiseInteractionHandlers()
@@ -109,10 +108,7 @@ public class FencingModule : MonoBehaviour
 
         if (!expectedKeyPresses.Any())
         {
-            currentMatchingRule = solver.Solve(currentScenario);
-            expectedKeyPresses = currentMatchingRule.Solution.ToList();
-            currentMatchingRule.Log(BombModule);
-            LogNextExpectedKeyPress();
+            BombModule.Log("ERROR: module not solved but no keypress expected !");
         }
 
         if (expectedKeyPresses[0] == pressedKey)
@@ -155,10 +151,13 @@ public class FencingModule : MonoBehaviour
     private void SetUpForScenario(Scenario scenario)
     {
         currentScenario = scenario;
-        expectedKeyPresses.Clear();
-        currentMatchingRule = null;
-        ApplyScenario(currentScenario);
         currentScenario.Log(BombModule);
+        ApplyScenario(currentScenario);
+
+        currentMatchingRule = solver.Solve(currentScenario);
+        expectedKeyPresses = currentMatchingRule.Solution.ToList();
+        currentMatchingRule.Log(BombModule);
+        LogNextExpectedKeyPress();
     }
 
     private void HandleIncorrectKeyPress(ActionKeys pressedKey)
